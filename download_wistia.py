@@ -50,20 +50,60 @@ TEMPLATE = """
 <html>
 <head>
     <title>Wistia Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h2>Paste Wistia Embed Code</h2>
-    <form method="post">
-        <textarea name="html" rows="5" cols="50"></textarea><br>
-        <button type="submit">Get Download Link</button>
-    </form>
-    {% if download_link %}
-        <p>Download Link: <a href="{{ download_link }}" target="_blank">{{ download_link }}</a></p>
-    {% elif error %}
-        <p style="color: red;">Error: {{ error }}</p>
-    {% endif %}
+    <div class="container">
+        <h2>Wistia Video Downloader</h2>
+        <form method="post">
+            <textarea name="html" placeholder="Paste Wistia Embed Code Here"></textarea><br>
+            <button type="submit">Get Download Link</button>
+        </form>
+        {% if download_link %}
+            <p><strong>Download Link:</strong> <a href="{{ download_link }}" target="_blank">Click here</a></p>
+        {% elif error %}
+            <p class="error">Error: {{ error }}</p>
+        {% endif %}
+    </div>
 </body>
 </html>
 """
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
