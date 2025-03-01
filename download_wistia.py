@@ -18,31 +18,31 @@ def get_wistia_video_url(video_id):
         assets = data.get("media", {}).get("assets", [])
         
         for asset in assets:
-            if asset.get("type") == "original":
+            if asset.get("type") == "original":  # Get the highest quality video
                 return asset.get("url")
         
         return assets[0].get("url") if assets else None
-    return None
+    else:
+        return None
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    if request.method == "POST":
-        html_input = request.json.get("html")
-        wistia_video_id = extract_wistia_id(html_input)
-        
-        if wistia_video_id:
-            video_url = get_wistia_video_url(wistia_video_id)
-            if video_url:
-                return jsonify({"download_link": video_url})
-            return jsonify({"error": "Could not retrieve video URL"}), 400
+@app.route("/download", methods=["POST"])
+def download():
+    data = request.get_json()
+    html_input = data.get("html")
+    
+    if not html_input:
+        return jsonify({"error": "Missing HTML input"}), 400
+    
+    wistia_video_id = extract_wistia_id(html_input)
+    
+    if wistia_video_id:
+        video_url = get_wistia_video_url(wistia_video_id)
+        if video_url:
+            return jsonify({"download_link": video_url})
+        else:
+            return jsonify({"error": "Could not retrieve video URL"}), 404
+    else:
         return jsonify({"error": "Could not extract Wistia video ID"}), 400
 
-    return '''
-    <form action="/" method="post">
-        <textarea name="html" rows="4" cols="50"></textarea><br>
-        <input type="submit" value="Get Download Link">
-    </form>
-    '''
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
